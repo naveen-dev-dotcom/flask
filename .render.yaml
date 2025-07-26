@@ -1,8 +1,0 @@
-flask
-torch
-torchaudio
-transformers
-pydub
-moviepy
-opencv-python
-deepface

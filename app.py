@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import os
 from pydub import AudioSegment
 from utils.extract_audio import extract_audio
@@ -8,6 +9,7 @@ from utils.transcribe import transcribe_audio
 from utils.image_emotion import get_image_emotion
 
 app = Flask(__name__)
+CORS(app)
 UPLOAD_FOLDER = "uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
@@ -32,12 +34,12 @@ def analyze():
 
         elif filename.endswith('.mp3'):
             audio_path = file_path.rsplit('.', 1)[0] + ".wav"
-            sound = AudioSegment.from_file(file_path, format="mp3")
+            sound = AudioSegment.from_file(file_path)
             sound.export(audio_path, format="wav")
 
         elif filename.endswith('.ogg'):
             audio_path = file_path.rsplit('.', 1)[0] + ".wav"
-            sound = AudioSegment.from_file(file_path, format="ogg")
+            sound = AudioSegment.from_file(file_path)
             sound.export(audio_path, format="wav")
 
         elif filename.endswith('.wav'):
@@ -53,7 +55,10 @@ def analyze():
         return jsonify(result)
 
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         return jsonify({"error": f"Processing failed: {str(e)}"}), 500
+
 
 
 @app.route('/analyze-image', methods=['POST'])
